@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project UAS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- container -->
+    <div class="container">
+      <!-- container2 -->
+      <div class="container2">
+        <!-- nyawa player -->
+        <div class="parentNyawaPlayer">
+          <div class="nyawa-player"></div>
+          <div class="buatNyawaPlayer" id="nyawaPlayer"></div>
+        </div>
+
+        <!-- Timer -->
+        <div id="timer" class="timer"></div>
+        <!-- nyawa musuh -->
+        <div class="parentNyawaMusuh">
+          <div class="nyawa-musuh"></div>
+          <div class="buatNyawaMusuh" id="nyawaMusuh"></div>
+        </div>
+      </div>
+      <div class="hasil" id="displayText">Seri</div>
+      <canvas id="canvas-id"></canvas>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+      integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="js/utility.js"></script>
+    <script src="js/class.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
