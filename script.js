@@ -88,18 +88,17 @@ const player = new Character({
 
 const enemy = new Character({
   posisi: {
-    x: canvas.width - 50,
+    x: 650,
     y: 100,
   },
   velocity: {
-    x: -3,
+    x: 0,
     y: 0,
   },
   offset: {
     x: 0,
     y: 0,
   },
-  warna: "green",
   imageSrc: "img/EvilWizard2/Sprites/Idle.png",
   framesMax: 8,
   scale: 2.35,
@@ -167,117 +166,8 @@ const keys = {
 
 decreaseTimer();
 
-function animate() {
-  window.requestAnimationFrame(animate);
-  // c.fillStyle = "black";
-  // c.fillRect(0, 0, canvas.width, canvas.height);
-  background.update();
-  shop.update();
-  c.fillStyle = "rgba(255, 255, 255, 0.15)";
-  c.fillRect(0, 0, canvas.width, canvas.height);
-  player.update();
-  enemy.update();
-
-  // reset velocity
-  player.setVelocityX(0);
-  enemy.setVelocityX(0);
-
-  // player1 movement
-  if (keys.a.pencet && player.lastKey === "a") {
-    player.setVelocityX(-3);
-    player.switchSprites("run");
-  } else if (keys.d.pencet && player.lastKey === "d") {
-    player.switchSprites("run");
-    player.setVelocityX(3);
-  } else {
-    player.switchSprites("idle");
-  }
-
-  // player1 lompat
-  if (player.getVelocityY() < 0) {
-    player.switchSprites("jump");
-  } else if (player.getVelocityY() > 0) {
-    player.switchSprites("fall");
-  }
-
-  // enemy movement
-  if (keys.ArrowLeft.pencet && enemy.lastKey === "ArrowLeft") {
-    enemy.setVelocityX(-3);
-    enemy.switchSprites("run");
-  } else if (keys.ArrowRight.pencet && enemy.lastKey === "ArrowRight") {
-    enemy.setVelocityX(3);
-    enemy.switchSprites("run");
-  } else {
-    enemy.switchSprites("idle");
-  }
-
-  // enemylompat
-  if (enemy.getVelocityY() < 0) {
-    enemy.switchSprites("jump");
-  } else if (enemy.getVelocityY() > 0) {
-    enemy.switchSprites("fall");
-  }
-
-  // cek kalo karakter nabrak tembok
-  wallDetection();
-
-  // ngecek kalo nyerang kena & musuh kena hit
-  if (
-    attackBox({
-      kotak1: player,
-      kotak2: enemy,
-    }) &&
-    player.getIsAttacking() &&
-    player.currentFrame === 2
-  ) {
-    enemy.takeHit();
-    player.setIsAttacking(false);
-
-    gsap.to("#nyawaMusuh", {
-      width: enemy.getHealth() + "%",
-    });
-    // console.log("kena LU");
-  }
-
-  // kalo player nyerang ga kena
-  if (player.getIsAttacking() && player.currentFrame === 2) {
-    player.setIsAttacking(false);
-  }
-
-  // kalo player kena hit
-  if (
-    attackBox({
-      kotak1: enemy,
-      kotak2: player,
-    }) &&
-    enemy.getIsAttacking() &&
-    enemy.currentFrame === 2
-  ) {
-    player.takeHit();
-    enemy.setIsAttacking(false);
-
-    gsap.to("#nyawaPlayer", {
-      width: player.getHealth() + "%",
-    });
-
-    console.log("kena juga LU");
-  }
-
-  // kalo enemy nyerang ga kena
-  if (enemy.getIsAttacking() && enemy.currentFrame === 2) {
-    enemy.setIsAttacking(false);
-  }
-
-  // end game berdasarkan HP
-  if (enemy.getHealth() <= 0 || player.getHealth() <= 0) {
-    menentukanYangMenang({ player, enemy, timerId });
-  }
-}
-
-animate();
-
 document.addEventListener("keydown", (event) => {
-  if (!player.dead) {
+  if (!player.dead && timer !== 0) {
     // console.log(event.key);
     switch (event.key) {
       // player1
@@ -290,7 +180,7 @@ document.addEventListener("keydown", (event) => {
         player.lastKey = "a";
         break;
       case "w":
-        player.setVelocityY(-10);
+        player.velocityY = -10;
         break;
       case " ":
         player.attack();
@@ -298,7 +188,7 @@ document.addEventListener("keydown", (event) => {
     }
   }
 
-  if (!enemy.dead) {
+  if (!enemy.dead && timer !== 0) {
     // enemy
     switch (event.key) {
       case "ArrowRight":
@@ -310,7 +200,7 @@ document.addEventListener("keydown", (event) => {
         enemy.lastKey = "ArrowLeft";
         break;
       case "ArrowUp":
-        enemy.setVelocityY(-10);
+        enemy.velocityY = -10;
         break;
       case "ArrowDown":
         enemy.attack();
@@ -337,3 +227,116 @@ document.addEventListener("keyup", (event) => {
       break;
   }
 });
+
+function animate() {
+  window.requestAnimationFrame(animate);
+  // c.fillStyle = "black";
+  // c.fillRect(0, 0, canvas.width, canvas.height);
+  background.update();
+  shop.update();
+  c.fillStyle = "rgba(255, 255, 255, 0.15)";
+  c.fillRect(0, 0, canvas.width, canvas.height);
+  player.update();
+  enemy.update();
+
+  // reset velocity
+  player.velocityX = 0;
+  enemy.velocityX = 0;
+
+  // player1 movement
+  if (keys.a.pencet && player.lastKey === "a") {
+    player.velocityX = -3;
+    player.switchSprites("run");
+  } else if (keys.d.pencet && player.lastKey === "d") {
+    player.switchSprites("run");
+    player.velocityX = 3;
+  } else {
+    player.switchSprites("idle");
+  }
+
+  // player1 lompat
+  if (player.velocityY < 0) {
+    player.switchSprites("jump");
+  } else if (player.velocityY > 0) {
+    player.switchSprites("fall");
+  }
+
+  // enemy movement
+  if (keys.ArrowLeft.pencet && enemy.lastKey === "ArrowLeft") {
+    enemy.velocityX = -3;
+    enemy.switchSprites("run");
+  } else if (keys.ArrowRight.pencet && enemy.lastKey === "ArrowRight") {
+    enemy.velocityX = 3;
+    enemy.switchSprites("run");
+  } else {
+    enemy.switchSprites("idle");
+  }
+
+  // enemylompat
+  if (enemy.velocityY < 0) {
+    enemy.switchSprites("jump");
+  } else if (enemy.velocityY > 0) {
+    enemy.switchSprites("fall");
+  }
+
+  // cek kalo karakter nabrak tembok
+  wallDetection();
+
+  // ngecek kalo nyerang kena & musuh kena hit
+  if (
+    attackBox({
+      kotak1: player,
+      kotak2: enemy,
+    }) &&
+    player.isAttacking &&
+    player.currentFrame === 2
+  ) {
+    enemy.takeHit();
+    player.isAttacking = false;
+
+    // document.getElementById("nyawaMusuh").style.width = enemy.health + "%";
+    gsap.to("#nyawaMusuh", {
+      width: enemy.health + "%",
+    });
+    console.log("kena LU");
+  }
+
+  // kalo player nyerang ga kena
+  if (player.isAttacking && player.currentFrame === 2) {
+    player.isAttacking = false;
+  }
+
+  // kalo player kena hit
+  if (
+    attackBox({
+      kotak1: enemy,
+      kotak2: player,
+    }) &&
+    enemy.isAttacking &&
+    enemy.currentFrame === 2
+  ) {
+    player.takeHit();
+    enemy.isAttacking = false;
+
+    // document.getElementById("nyawaPlayer").style.width =
+    //   player.health + "%";
+    gsap.to("#nyawaPlayer", {
+      width: player.health + "%",
+    });
+
+    console.log("kena juga LU");
+  }
+
+  // kalo enemy nyerang ga kena
+  if (enemy.isAttacking && enemy.currentFrame === 2) {
+    enemy.isAttacking = false;
+  }
+
+  // end game berdasarkan HP
+  if (enemy.health <= 0 || player.health <= 0) {
+    menentukanYangMenang();
+  }
+}
+
+animate();
+
